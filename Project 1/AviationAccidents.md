@@ -250,4 +250,6 @@ ORDER BY CAST([Year] AS INT), CAST([Month] AS INT), CAST([Day] AS INT);
 ```
 
 # Final Dashboard
-![png](Aviation-Accidents-Dashboard)
+below is the final Dashboard which graphically represents the information deemed most important for the analysis:
+
+![png](Dashboard)

@@ -4,4 +4,4 @@ My personal Data Analyst portfolio, specializing in **Data Visualization**. This
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" width="20" align="center"> LinkedIn: https://www.linkedin.com/in/www.linkedin.com/in/daniel-albu-296280359
 
 # My Projects
-[Aviation Accidents Analysis](./AviationAccidents.md)
+Project 1: [Aviation Accidents Analysis](./Progect%201/AviationAccidents.md)

@@ -4,7 +4,7 @@ IASS (International Alliance for Safe Skies) has a dataset containing approximat
 Their goal is to analyze this data to uncover valuable insights, identify the main risk factors in flight, and ultimately improve aviation safety.
 The results of the analysis must be presented in a clear and easy-to-understand dashboard.
 
-**Dataset:** [aviation-accidents-COPY.csv](./aviation-accidents-COPY.csv)
+**Dataset:** [aviation-accidents.csv](./aviation-accidents-COPY.csv)
 
 **Tools:**
 - Power Query

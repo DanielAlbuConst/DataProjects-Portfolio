@@ -249,7 +249,34 @@ FROM Stage_AviationAccidents
 ORDER BY CAST([Year] AS INT), CAST([Month] AS INT), CAST([Day] AS INT);
 ```
 
-# Final Dashboard
-below is the final Dashboard which graphically represents the information deemed most important for the analysis:
+# Data visualization
+Let's define the chart type for each insight:
+
+- Accidents By Country: **Choropleth map**
+- NrAccidents By Year: **Line chart**
+- Top 5 Acc By Operator: **Horizontal bar chart**
+- Top 5 Acc By Aircraft: **Horizontal bar chart**
+- AVG Fatalities By Category: **Pie Chart**
+- NrAcc By Season: **Pie Chart**
+
+**Visualizing the following insights through the dashboard**
 
 ![png](Dashboard)
+
+# Conclusions
+
+The choropleth map on the left highlights the countries where the majority of accidents occur through darker color gradients. The United States accounts for the highest number of accidents. However, without data on the total number of flights, we cannot determine whether this reflects a higher risk associated with U.S. flights or simply a significantly higher number of flights in the United States compared to other countries. Nevertheless, this is still a relevant finding worth reporting to the AISS.
+
+The same consideration applies to the number of accidents by airline operator and aircraft. We cannot determine whether the high number of accidents is due to lower safety standards or simply to a higher total number of flights.
+
+The line chart at the top, showing the trend in accidents by year, indicates that the number of accidents has remained relatively stable over time, with the notable exception of the period around World War II.
+
+Again, determining whether aviation safety has improved or deteriorated over the years would require data on the total number of flights. However, obtaining such data would be extremely difficult, if not impossible, especially considering the discontinuation of many former airlines whose historical records are no longer available.
+
+In this case, although relying on external knowledge is generally a risky approach in data analysis, we can take into account a well-established fact that does not come directly from our dataset: the number of flights has increased significantly over the years. Since the number of accidents has remained relatively stable over time and has even declined since 2020, we can reasonably conclude that **aviation safety has improved significantly over the years**.
+
+We also investigated whether there was a particularly dangerous season. However, the pie chart shows that accidents are relatively evenly distributed across the four seasons.
+
+Although H1 accidents (Hijackings) occur much less frequently than other accident categories, they have the highest average number of fatalities, with as many as **86 fatalities per hijacking on average**. This highlights the importance of continuously improving and never treating pre-flight security checks superficially, as an error at this stage could have devastating consequences and potentially result in a major tragedy.
+
+This is further supported by filtering the dataset by the number of fatalities: the accident with the highest number of fatalities belongs precisely to category H1, namely the infamous **September 11 attacks**, with an exceptionally high confirmed death toll of **1,692 victims**.

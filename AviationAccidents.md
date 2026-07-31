@@ -1,5 +1,4 @@
-# AviationAccidents
-**Description:**
+# Project description
 
 IASS (International Alliance for Safe Skies) has a dataset containing approximately 25K aviation accidents.
 Their goal is to analyze this data to uncover valuable insights, identify the main risk factors in flight, and ultimately improve aviation safety.
@@ -7,14 +6,14 @@ The results of the analysis must be presented in a clear and easy-to-understand 
 
 **Dataset:** [aviation-accidents-COPY.csv](./aviation-accidents-COPY.csv)
 
-**Tools**
+**Tools:**
 - Power Query
 - SQL
 - Tableau
 
 # The Analysis Process
 
-**1) Import Data**
+**1) Import Data:**
 
 The data is imported from CSV into a SQL database to facilitate the data cleaning process.
 A staging table is then created to store the entire dataset, with all columns formatted as VARCHAR.
@@ -43,7 +42,7 @@ WITH(
 );
 ```
 
-**2a) Data Cleaning - Whitespace, BLANK value and NULL**
+**2a) Data Cleaning - Whitespace, BLANK value and NULL:**
 
 Whitespace and BLANK values are identified:
 
@@ -69,7 +68,7 @@ UPDATE Stage_AviationAccidents
 SET Operator = TRIM(Operator);
 ```
 
-**2b) Data Cleaning - Data Consistency**
+**2b) Data Cleaning - Data Consistency:**
 
 I verify that the dates are correctly formatted:
 ```sql
@@ -97,7 +96,7 @@ SET [Month] = NULL
 WHERE [Month] = '14';
 ```
 
-**2c) Data Cleaning - Extra Characters**
+**2c) Data Cleaning - Extra Characters:**
 
 Identification of extra characters within the column [Type], [Registration], [Operator], [Location]:
 ```sql
@@ -139,7 +138,7 @@ UPDATE Stage_AviationAccidents
 SET [Type] = REPLACE([Type], '+®', 'é');
 ```
 
-**2d) Data Cleaning - Final Check**
+**2d) Data Cleaning - Final Check:**
 
 -- Check data consistency in the remaining columns
 ```sql
@@ -189,7 +188,7 @@ SET Country = NULL
 WHERE Country = '?' OR Country = 'Unknown country';
 ```
 
-**3) DATA TYPE CONVERSION**
+**3) Data type conversion:**
 
 After cleaning the data, it is trasferred into a Target Table, with a new [Date] column created from the [Day], [Month], and [Year] columns.
 The first step is to create the Target Table:

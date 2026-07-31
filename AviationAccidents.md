@@ -248,3 +248,6 @@ SELECT
 FROM Stage_AviationAccidents
 ORDER BY CAST([Year] AS INT), CAST([Month] AS INT), CAST([Day] AS INT);
 ```
+
+# Final Dashboard
+![png](Aviation-Accidents-Dashboard)

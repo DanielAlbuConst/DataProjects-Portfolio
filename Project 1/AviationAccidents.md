@@ -34,6 +34,8 @@ For the purposes of the analysis, it was decided to identify the following insig
   - [**2c)** Extra characters](#extra-characters)
   - [**2d)** Final check](#final-check)
  - [**3)** Data type conversion](#3-data-type-conversion)
+ - [Data visualization](#data-visualization)
+ - [Conclusions](#conclusions)
 
 ## 1) Import data
 

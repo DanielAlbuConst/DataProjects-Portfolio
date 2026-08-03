@@ -1,22 +1,11 @@
 # Project description
 
-IASS (International Alliance for Safe Skies) has a dataset containing approximately 25K aviation accidents.
-Their goal is to analyze this data to uncover valuable insights, identify the main risk factors in flight, and ultimately **improve aviation safety**.
+IASS (International Alliance for Safe Skies) has a dataset containing approximately 25K aviation accidents.<br>
+Their goal is to analyze this data to uncover valuable insights, identify the main risk factors in flight, and ultimately **improve aviation safety**.<br>
 The results of the analysis must be presented in a clear and easy-to-understand dashboard.
 
-- [**1)** Import data](#1-import-data)<br>
-- [**2)** Data cleaning](#2-data-cleaning)
-  - [**2a)** Whitespace, BLANK and NULL](#whitespace-blank-and-null)
-  - [**2b)** Data consistency](#data-consistency)
-  - [**2c)** Extra characters](#extra-characters)
-  - [**2d)** Final check](#final-check)
- - [**3)** Data type conversion](#3-data-type-conversion)
-
-
-
-
-
 **Dataset:** [aviation-accidents.csv](./aviation-accidents-COPY.csv)
+
 ## Insights
 For the purposes of the analysis, it was decided to identify the following insights:
 - Accidents *by* Country
@@ -28,24 +17,36 @@ For the purposes of the analysis, it was decided to identify the following insig
 
 ## Tools
 - Power Query
-- SQL
+- SQL Server
 - Tableau
+
+## How to use
+1) Use **table of contents** to navigate directly to the chapter of interest.
+2) Whenever **[FIELD]** appears in the code, this means that the code has been repeated for each column in the database.
 
 # The Analysis Process
 
+### Table of Contents
+- [**1)** Import data](#1-import-data)<br>
+- [**2)** Data cleaning](#2-data-cleaning)
+  - [**2a)** Whitespace, BLANK and NULL](#whitespace-blank-and-null)
+  - [**2b)** Data consistency](#data-consistency)
+  - [**2c)** Extra characters](#extra-characters)
+  - [**2d)** Final check](#final-check)
+ - [**3)** Data type conversion](#3-data-type-conversion)
+
 ## 1) Import data
 
-The data is imported from CSV into a SQL database to facilitate the data cleaning process.
-A staging table is then created to store the entire dataset, with all columns formatted as VARCHAR.
+The data is imported from CSV into a SQL database to facilitate the data cleaning process.<br>
+A **staging table** is then created to store the entire dataset, with all columns formatted as VARCHAR.
 ```sql
--- 1) Staging Table Creation
+-- 1) Staging Table Creation:
 CREATE TABLE Stage_AviationAccidents(
 	NrAccidents VARCHAR(150),
 	[Day] VARCHAR(150),
 	[Month] VARCHAR(150),
 	[Year] VARCHAR(150),
 	[Type] VARCHAR(150),
-	Registration VARCHAR(150),
 	Operator VARCHAR(150),
 	Fatalities VARCHAR(150),
 	[Location] VARCHAR(150),
@@ -53,7 +54,7 @@ CREATE TABLE Stage_AviationAccidents(
 	Category VARCHAR(150)
 );
 
--- 2) Import data into Staging Table
+-- 2) Import data into Staging Table:
 BULK INSERT Stage_AviationAccidents
 FROM 'C:\Users\danie\Desktop\aviation-accidents-COPY.csv'
 WITH(
@@ -63,18 +64,18 @@ WITH(
 ```
 
 ## 2) Data cleaning
-### Whitespace, BLANK and NULL:
+### Whitespace, BLANK and NULL
 Whitespace and BLANK values are identified:
 
 ```sql
--- 1) Whitespace identification
+-- 1) Whitespace identification:
 SELECT
 	[Field],
 	LEN([Field]) - LEN(TRIM([Field])) AS [Whitespace]
 FROM Stage_AviationAccidents 
 WHERE LEN([Field]) - LEN(TRIM([Field])) != 0;
 
--- 2) BLANK value identification
+-- 2) BLANK value identification:
 SELECT
 	*
 FROM Stage_AviationAccidents
@@ -83,109 +84,98 @@ WHERE [Field] = '';
 
 No BLANK values were identified, so I proceeded with removing whitespace only:
 ```sql
--- Whitespace removal
+-- Whitespace removal:
 UPDATE Stage_AviationAccidents
 SET Operator = TRIM(Operator);
 ```
 
-### Data Consistency:
+### Data Consistency
 
 I verify that the dates are correctly formatted:
 ```sql
--- 1) Verify [Day] consistency
+-- 1) Verify [Day] consistency:
 SELECT DISTINCT
 	[Day]
 FROM Stage_AviationAccidents;
 
--- 2) Verify [Month] consistency
+-- 2) Verify [Month] consistency:
 SELECT DISTINCT
 	[Month]
 FROM Stage_AviationAccidents;
 
--- 3) Verify [Year] consistency
+-- 3) Verify [Year] consistency:
 SELECT DISTINCT
 	[Year]
 FROM Stage_AviationAccidents;
 ```
 
-I correct the anomalous Month value: [14]
+I correct the anomalous [Month] value: [14].<br>
 '14' is searched for as a string because [Month] is formatted as VARCHAR
 ```sql
+-- Correction of anomalous value:
 UPDATE Stage_AviationAccidents
 SET [Month] = NULL
 WHERE [Month] = '14';
 ```
 
-### Extra Characters:
+### Extra characters
 
-Identification of extra characters within the column [Type], [Registration], [Operator], [Location]:
+Identification of extra characters within the column [Type], [Operator], [Location]:
 ```sql
--- 1) Identify extra characters in column [Type]
+-- 1) Identify extra characters in column [Type]:
 SELECT DISTINCT
 	[Type]
 FROM Stage_AviationAccidents
 WHERE [Type] LIKE '%[^-A-Za-z0-9 .()+?®/''&¿¡]%';
 
--- 2) Identify extra characters in column [Registration]
-SELECT DISTINCT
-	Registration
-FROM Stage_AviationAccidents
-WHERE Registration LIKE '%[^-A-Za-z0-9()+/ ?.]%';
-
--- 3) Identify extra characters in column [Operator]
+-- 2) Identify extra characters in column [Operator]:
 SELECT DISTINCT
 	[Operator]
 FROM Stage_AviationAccidents
 WHERE [Operator] LIKE '%[^-A-Za-z0-9 +&.®¦()¡''¬»¿/?!¢©]%';
 
--- 4) Identify extra characters in column [Location]
+-- 3) Identify extra characters in column [Location]:
 SELECT DISTINCT
 	[Location]
 FROM Stage_AviationAccidents
 WHERE [Location] LIKE '%[^-A-Za-z0-9 )(.+®¦¡/''»©¿&*£¢º`]%';
 ```
 
-[Registration] contains many fully or partially unknown values and is not relevant to the analysis, so it was decided to remove it.
-```sql
-ALTER TABLE Stage_AviationAccidents
-DROP COLUMN [Registration];
-```
-
 I replace the identified extra characters with the appropriate ones.
 (Since the code is essentially the same for all replacements, only one replacement is shown.)
 ```sql
+-- Removal of extra characters:
 UPDATE Stage_AviationAccidents
 SET [Type] = REPLACE([Type], '+®', 'é');
 ```
 
-### Final Check:
+### Final Check
 
--- Check data consistency in the remaining columns
+Check data consistency in the remaining columns
 ```sql
--- 1) Verify [Fatalities] consistency
+-- 1) Verify [Fatalities] consistency:
 SELECT DISTINCT
 	[Fatalities]
 FROM Stage_AviationAccidents;
 
--- 2) Verify [Country] consistency
+-- 2) Verify [Country] consistency:
 SELECT DISTINCT
 	[Country]
 FROM Stage_AviationAccidents;
 
--- 3) Verify [Category] consistency
+-- 3) Verify [Category] consistency:
 SELECT DISTINCT
 	[Category]
 FROM Stage_AviationAccidents;
 ```
 
-Errors identified:
-
+Errors identified:<br>
 - [Fatalities] contains values written as sums (e.g. 5+8 instead of 13)
 - [Country] contains '?' and 'Unknown country': I decided to standardize both as NULL
 
 Standardization of field [Fatalities]:
 ```sql
--- 1) Extract values on both sides of '+'
+-- 1) Extract values on both sides of '+':
 SELECT
 	Fatalities,
 	LEFT(Fatalities, CHARINDEX('+', Fatalities) - 1) AS [Left],
@@ -193,7 +183,7 @@ SELECT
 FROM Stage_AviationAccidents
 WHERE Fatalities LIKE '%+%';
 
--- 2) Sum the extracted values
+-- 2) Sum the extracted values:
 UPDATE Stage_AviationAccidents
 SET Fatalities = CAST(LEFT(Fatalities, CHARINDEX('+', Fatalities) - 1) AS INT) +
 CAST(SUBSTRING(Fatalities, CHARINDEX('+', Fatalities) + 1, LEN(Fatalities) - CHARINDEX('+', Fatalities)) AS INT)
@@ -202,7 +192,7 @@ WHERE Fatalities LIKE '%+%';
 
 Standardization of field [Country]:
 ```sql
--- Replace '?' and 'Unknown country' with NULL
+-- Replace '?' and 'Unknown country' with NULL:
 UPDATE Stage_AviationAccidents
 SET Country = NULL
 WHERE Country = '?' OR Country = 'Unknown country';
@@ -213,7 +203,7 @@ WHERE Country = '?' OR Country = 'Unknown country';
 After cleaning the data, it is trasferred into a Target Table, with a new [Date] column created from the [Day], [Month], and [Year] columns.
 The first step is to create the Target Table:
 ```sql
--- Create Target table
+-- Create Target table:
 CREATE TABLE Target_AviationAccidents(
 NrAccidents INT NOT NULL IDENTITY(1, 1) PRIMARY KEY,
 [Day] INT,
@@ -252,7 +242,7 @@ END;
 
 Now we can transer the data:
 ```sql
--- Data transfer
+-- Data transfer:
 INSERT INTO Target_AviationAccidents
 SELECT
 	 [Day],

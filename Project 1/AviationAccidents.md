@@ -4,16 +4,36 @@ IASS (International Alliance for Safe Skies) has a dataset containing approximat
 Their goal is to analyze this data to uncover valuable insights, identify the main risk factors in flight, and ultimately **improve aviation safety**.
 The results of the analysis must be presented in a clear and easy-to-understand dashboard.
 
-**Dataset:** [aviation-accidents.csv](./aviation-accidents-COPY.csv)
+- [**1)** Import data](#1-import-data)<br>
+- [**2)** Data cleaning](#2-data-cleaning)
+  - [**2a)** Whitespace, BLANK and NULL](#whitespace-blank-and-null)
+  - [**2b)** Data consistency](#data-consistency)
+  - [**2c)** Extra characters](#extra-characters)
+  - [**2d)** Final check](#final-check)
+ - [**3)** Data type conversion](#3-data-type-conversion)
 
-**Tools:**
+
+
+
+
+**Dataset:** [aviation-accidents.csv](./aviation-accidents-COPY.csv)
+## Insights
+For the purposes of the analysis, it was decided to identify the following insights:
+- Accidents *by* Country
+- NrAccidents *by* Year
+- Top 5 Accidents *by* Operator
+- Top 5 Accidents *by* Aircraft
+- AVG Fatalities *by* Category
+- NrAccidents *by* Season
+
+## Tools
 - Power Query
 - SQL
 - Tableau
 
 # The Analysis Process
 
-**1) Import Data:**
+## 1) Import data
 
 The data is imported from CSV into a SQL database to facilitate the data cleaning process.
 A staging table is then created to store the entire dataset, with all columns formatted as VARCHAR.
@@ -42,8 +62,8 @@ WITH(
 );
 ```
 
-**2a) Data Cleaning - Whitespace, BLANK value and NULL:**
-
+## 2) Data cleaning
+### Whitespace, BLANK and NULL:
 Whitespace and BLANK values are identified:
 
 ```sql
@@ -68,7 +88,7 @@ UPDATE Stage_AviationAccidents
 SET Operator = TRIM(Operator);
 ```
 
-**2b) Data Cleaning - Data Consistency:**
+### Data Consistency:
 
 I verify that the dates are correctly formatted:
 ```sql
@@ -96,7 +116,7 @@ SET [Month] = NULL
 WHERE [Month] = '14';
 ```
 
-**2c) Data Cleaning - Extra Characters:**
+### Extra Characters:
 
 Identification of extra characters within the column [Type], [Registration], [Operator], [Location]:
 ```sql
@@ -138,7 +158,7 @@ UPDATE Stage_AviationAccidents
 SET [Type] = REPLACE([Type], '+®', 'é');
 ```
 
-**2d) Data Cleaning - Final Check:**
+### Final Check:
 
 -- Check data consistency in the remaining columns
 ```sql
@@ -163,7 +183,7 @@ Errors identified:
 - [Fatalities] contains values written as sums (e.g. 5+8 instead of 13)
 - [Country] contains '?' and 'Unknown country': I decided to standardize both as NULL
 
-STANDARDIZATION OF FIELD [Fatalities]:
+Standardization of field [Fatalities]:
 ```sql
 -- 1) Extract values on both sides of '+'
 SELECT
@@ -180,7 +200,7 @@ CAST(SUBSTRING(Fatalities, CHARINDEX('+', Fatalities) + 1, LEN(Fatalities) - CHA
 WHERE Fatalities LIKE '%+%';
 ```
 
-STANDARDIZATION OF FIELD [Country]:
+Standardization of field [Country]:
 ```sql
 -- Replace '?' and 'Unknown country' with NULL
 UPDATE Stage_AviationAccidents
@@ -188,7 +208,7 @@ SET Country = NULL
 WHERE Country = '?' OR Country = 'Unknown country';
 ```
 
-**3) Data type conversion:**
+## 3) Data type conversion
 
 After cleaning the data, it is trasferred into a Target Table, with a new [Date] column created from the [Day], [Month], and [Year] columns.
 The first step is to create the Target Table:
@@ -252,12 +272,12 @@ ORDER BY CAST([Year] AS INT), CAST([Month] AS INT), CAST([Day] AS INT);
 # Data visualization
 Let's define the chart type for each insight:
 
-- Accidents By Country: **Choropleth map**
-- NrAccidents By Year: **Line chart**
-- Top 5 Acc By Operator: **Horizontal bar chart**
-- Top 5 Acc By Aircraft: **Horizontal bar chart**
-- AVG Fatalities By Category: **Pie Chart**
-- NrAcc By Season: **Pie Chart**
+- Accidents *by* Country: **Choropleth map**
+- NrAccidents *by* Year: **Line chart**
+- Top 5 Accidents *by* Operator: **Horizontal bar chart**
+- Top 5 Accidents *by* Aircraft: **Horizontal bar chart**
+- AVG Fatalities *by* Category: **Pie Chart**
+- NrAccidents *by* Season: **Pie Chart**
 
 **Visualizing the following insights through the dashboard**
 

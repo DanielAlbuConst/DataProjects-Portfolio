@@ -1,7 +1,7 @@
 # Project description
 
 IASS (International Alliance for Safe Skies) has a dataset containing approximately 25K aviation accidents.
-Their goal is to analyze this data to uncover valuable insights, identify the main risk factors in flight, and ultimately improve aviation safety.
+Their goal is to analyze this data to uncover valuable insights, identify the main risk factors in flight, and ultimately **improve aviation safety**.
 The results of the analysis must be presented in a clear and easy-to-understand dashboard.
 
 **Dataset:** [aviation-accidents.csv](./aviation-accidents-COPY.csv)
